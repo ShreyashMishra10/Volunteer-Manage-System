@@ -4,7 +4,8 @@ import { Menu, X, Heart, User, LogOut, Shield, Mail } from 'lucide-react';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState(null); 
+  const [user, setUser] = useState(null);
+  const [showProfile, setShowProfile] = useState(false);
   const navigate = useNavigate();
 
   // 1. SAFE CHECK USER LOGIN
@@ -79,10 +80,13 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-4">
             {user ? (
               <>
-                <div className="flex items-center text-gray-700 font-medium">
-                  <User className="h-5 w-5 mr-2 text-emerald-600" />
+                <button
+                  onClick={() => setShowProfile(true)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-full border-2 border-emerald-500 text-emerald-700 font-semibold bg-emerald-50 hover:bg-emerald-500 hover:text-white transition-all duration-200 shadow-sm cursor-pointer"
+                >
+                  <User className="h-4 w-4" />
                   <span>Hello, {user.name}</span>
-                </div>
+                </button>
                 <button 
                   onClick={handleLogout} 
                   className="flex items-center text-gray-600 hover:text-red-500 font-medium px-3 py-2 transition duration-200"
@@ -162,6 +166,71 @@ const Navbar = () => {
                 </Link>
                </div>
             )}
+          </div>
+        </div>
+      )}
+      {/* Profile Dialog */}
+      {showProfile && user && (
+        <div
+          className="fixed inset-0 z-100 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+          onClick={() => setShowProfile(false)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="bg-emerald-600 px-6 py-6 flex flex-col items-center relative">
+              <button
+                onClick={() => setShowProfile(false)}
+                className="absolute top-3 right-4 text-white/70 hover:text-white text-xl font-bold leading-none"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center text-emerald-600 text-3xl font-bold shadow-md mb-3">
+                {user.name?.charAt(0).toUpperCase()}
+              </div>
+              <h2 className="text-white text-xl font-bold">{user.name}</h2>
+              <span className={`mt-1 text-xs font-semibold px-3 py-0.5 rounded-full ${user.role === 'admin' ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-700'}`}>
+                {user.role?.toUpperCase()}
+              </span>
+            </div>
+
+            {/* Details */}
+            <div className="px-6 py-5 space-y-4">
+              <div className="flex items-center gap-3 text-gray-700">
+                <User className="w-5 h-5 text-emerald-500 shrink-0" />
+                <div>
+                  <p className="text-xs text-gray-400 font-medium">Full Name</p>
+                  <p className="font-semibold">{user.name}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 text-gray-700">
+                <Mail className="w-5 h-5 text-emerald-500 shrink-0" />
+                <div>
+                  <p className="text-xs text-gray-400 font-medium">Email Address</p>
+                  <p className="font-semibold">{user.email}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 text-gray-700">
+                <Shield className="w-5 h-5 text-emerald-500 shrink-0" />
+                <div>
+                  <p className="text-xs text-gray-400 font-medium">Account Role</p>
+                  <p className="font-semibold capitalize">{user.role}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="px-6 pb-5">
+              <button
+                onClick={() => { handleLogout(); setShowProfile(false); }}
+                className="w-full flex items-center justify-center gap-2 bg-red-50 hover:bg-red-100 text-red-500 font-semibold py-2.5 rounded-xl transition duration-200"
+              >
+                <LogOut className="w-4 h-4" />
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       )}
